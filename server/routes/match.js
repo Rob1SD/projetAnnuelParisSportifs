@@ -21,32 +21,33 @@ router.get('/', function(req, res, next) {
 			var currChild=tableauScore[i].child;
 			if (currChild)
 			{
-				var sizeChild=currChild.length
-				var res1 = ""
+				var sizeChild=currChild.length;
+				var res1 = "";
 				if (currChild[2])
 				{
 					if (currChild[2].child)
 					{	
-						result+='"child'+cpt+'":{'
-						result+='"date":"'+currChild[2].child["0"].text+'",'
-						result+='"match":"'+currChild[4].child["1"].child["0"].text+'",'
-						result+='"score":"'+currChild[5].child["0"].child["0"].text+'"'
-						result+="},"
+						result+='"child'+cpt+'":{';
+						result+='"date":"'+currChild[2].child["0"].text+'",';
+						result+='"match":"'+currChild[4].child["1"].child["0"].text+'",';
+						result+='"score":"'+currChild[5].child["0"].child["0"].text+'"';
+						result+="},";
 						++cpt;
-						//res1+=currChild[2].child["0"].text + "    " + currChild[4].child["1"].child["0"].text+ "    " + currChild[5].child["0"].child["0"].text
+						
 					}
 				}
-				//result+=res1+'\n'
 
 			}
 
 
 		}
-		result=result.substring(0, result.length - 1)
-		result+="}"
+		result=result.substring(0, result.length - 1);
+		result+="}";
 		result=JSON.parse(result);
+		var resultSize=Object.keys(result).length;
+		result.length=resultSize;
+		console.log(result);
 		res.send(result);
-		// return result;
 	})
 	
 });
