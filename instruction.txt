@@ -1,0 +1,3 @@
+1) lancer la commande suivante : ngrok http 3000
+copié l'adressede connection qui s'affiche
+la mettre dans le code
