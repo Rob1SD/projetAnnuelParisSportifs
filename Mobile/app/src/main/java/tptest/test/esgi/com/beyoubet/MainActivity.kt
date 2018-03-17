@@ -5,6 +5,10 @@ import android.os.Bundle
 import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.EditText
+import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_main.*
+import org.json.JSONObject
 import java.net.URL
 
 class MainActivity : AppCompatActivity() {
@@ -13,8 +17,9 @@ class MainActivity : AppCompatActivity() {
 //        super.onCreate(savedInstanceState)
 //        setContentView(R.layout.activity_main)
 //    }
-    var mywebview: WebView? = null
-    override fun onCreate(savedInstanceState: Bundle?) {
+    val urlTxt = "http://c48d3312.ngrok.io/match"
+//    var matchList: EditText? = null
+   /* override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         mywebview = findViewById<WebView>(R.id.webview)
@@ -29,11 +34,42 @@ class MainActivity : AppCompatActivity() {
                 super.onReceivedError(view, errorCode, description, failingUrl)
             }
         }
-//        mywebview!!.loadUrl("http://www.matchendirect.fr/rss/foot-ligue-1-c16.xml")
-//        val result = URL("http://www.foot-national.com/partage.php?type=3&id=118").readText()
-//        Log.i("WEB_VIEW_TEST", result)
-//        mywebview!!.loadUrl("http://www.foot-national.com/match-foot-marseille-bastia-205886.html")
-        mywebview!!.loadUrl("http://51fdac37.ngrok.io/match")
-//        mywebview!!.loadUrl("https://www.facebook.com/")
+
+
+//        Log.i("RESULTAT REQU", testurl);
+        mywebview!!.loadUrl(urlTxt)
+        Thread({
+            val testurl = URL( urlTxt).readText()
+
+            runOnUiThread({
+                Toast.makeText(this, testurl, Toast.LENGTH_SHORT).show()
+            })
+        }).start()
+
+    }*/
+        override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+       Thread({
+           val textURL = URL( urlTxt).readText()
+
+           runOnUiThread({
+               var resultText = "";
+               val jsonObj = JSONObject(textURL)
+               val jsonSize = jsonObj["length"].toString().toInt() - 1;
+               for (i in 0 .. jsonSize)
+               {
+                   var cur=JSONObject(jsonObj["child"+i].toString())
+                   var date=cur["date"].toString()
+                   var match=cur["match"].toString()
+                   var score=cur["score"].toString()
+                   resultText+=date + " " + match + " " +score + "\n"
+               }
+               var matchList = findViewById<EditText>(R.id.matchList) as? EditText
+               matchList!!.setText(resultText);
+           })
+       }).start()
+
+        setContentView(R.layout.activity_main)
     }
 }
