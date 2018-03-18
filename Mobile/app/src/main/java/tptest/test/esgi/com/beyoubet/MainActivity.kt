@@ -5,11 +5,16 @@ import android.os.Bundle
 import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Adapter
 import android.widget.EditText
+import android.widget.ListView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONObject
 import java.net.URL
+import android.widget.ArrayAdapter
+
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 //        super.onCreate(savedInstanceState)
 //        setContentView(R.layout.activity_main)
 //    }
-    val urlTxt = "http://c48d3312.ngrok.io/match"
+    val urlTxt = "http://163cbd4e.ngrok.io/match"
 //    var matchList: EditText? = null
    /* override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,19 +62,33 @@ class MainActivity : AppCompatActivity() {
                var resultText = "";
                val jsonObj = JSONObject(textURL)
                val jsonSize = jsonObj["length"].toString().toInt() - 1;
+               var matchList = findViewById<ListView>(R.id.matchList) as? ListView
+               var myList: MutableList<String> = mutableListOf<String>()
+               var myListObject: MutableList<JSONObject> = mutableListOf<JSONObject>()
                for (i in 0 .. jsonSize)
                {
                    var cur=JSONObject(jsonObj["child"+i].toString())
                    var date=cur["date"].toString()
                    var match=cur["match"].toString()
                    var score=cur["score"].toString()
-                   resultText+=date + " " + match + " " +score + "\n"
+                   val rootObject= JSONObject()
+                   rootObject.put("date",date)
+                   rootObject.put("score",score)
+                   myListObject.add(rootObject)
+                   resultText=match
+//                   resultText=date + " " + match + " " +score + "\n"
+                   myList.add(match)
+
                }
-               var matchList = findViewById<EditText>(R.id.matchList) as? EditText
-               matchList!!.setText(resultText);
+               val adapter = ArrayAdapter<String>(this@MainActivity, android.R.layout.simple_list_item_1, myList)
+               matchList!!.setAdapter(adapter)
+               matchList.setOnItemClickListener { adapterView, view, i, l ->
+                   Toast.makeText(this, myListObject[i]["date"].toString() + "  " + myListObject[i]["score"].toString() , Toast.LENGTH_SHORT).show()
+               }
            })
        }).start()
 
         setContentView(R.layout.activity_main)
     }
+
 }
